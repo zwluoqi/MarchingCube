@@ -115,7 +115,11 @@ public class MarchingCubeMesh : MonoBehaviour
 
     public void OnDebugSetttingUpdated()
     {
-        // GenerateMesh();
+        if (debugSetting.showCube)
+        {
+            shapeSetting.resolution = debugSetting.showCubeResolution;
+            GenerateMesh();
+        }
     }
 }
 
