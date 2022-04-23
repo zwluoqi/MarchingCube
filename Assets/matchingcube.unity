@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028364, g: 0.22571398, b: 0.30692267, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -154,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshFilter: {fileID: 1647780311}
   shapeSetting: {fileID: 11400000, guid: 615342b7918816a4dae412305143ce35, type: 2}
-  debugSetting: {fileID: 11400000, guid: 5481c09e858f52a4ea92e50f6cb529e4, type: 2}
+  debugSetting: {fileID: 11400000, guid: 4828f825317e54a6e9b568cdea162125, type: 2}
 --- !u!4 &67202981
 Transform:
   m_ObjectHideFlags: 0
@@ -162,14 +162,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 67202979}
-  m_LocalRotation: {x: 0, y: 0.11606401, z: 0, w: 0.9932418}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1647780313}
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 13.33, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &111789511
 GameObject:
   m_ObjectHideFlags: 0
@@ -412,7 +412,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshFilter: {fileID: 1937338687}
   shapeSetting: {fileID: 11400000, guid: b4e9d8cae02478e48bf6d718b746bbae, type: 2}
-  debugSetting: {fileID: 11400000, guid: 5481c09e858f52a4ea92e50f6cb529e4, type: 2}
+  debugSetting: {fileID: 11400000, guid: 869b205b58e93435094aa2c6f4a06ebf, type: 2}
 --- !u!4 &764549639
 Transform:
   m_ObjectHideFlags: 0
@@ -619,13 +619,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1497504339}
-  m_LocalRotation: {x: 0, y: 0.25890335, z: 0, w: 0.9659033}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.31860837, y: 0.2444129, z: -0.085400656, w: 0.91184306}
+  m_LocalPosition: {x: -3.3, y: 11.9, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 30.01, z: 0}
+  m_LocalEulerAnglesHint: {x: 38.52, y: 30.01, z: 0}
 --- !u!1 &1647780310
 GameObject:
   m_ObjectHideFlags: 0

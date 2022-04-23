@@ -18,6 +18,8 @@ public class MarchingCubeMesh : MonoBehaviour
     CubeTangentUtil cubeTangentUtil = new CubeTangentUtil();
     [NonSerialized]
     public bool shapeSetttingsFoldOut;
+    [NonSerialized]
+    public bool debugSetttingsFoldOut;
 
     public void GenerateMesh()
     {
@@ -110,6 +112,10 @@ public class MarchingCubeMesh : MonoBehaviour
         }
     }
 
-    
+
+    public void OnDebugSetttingUpdated()
+    {
+        // GenerateMesh();
+    }
 }
 

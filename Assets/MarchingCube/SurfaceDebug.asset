@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e0c254c7d6044b7b81fbcbc413f9ba1, type: 3}
-  m_Name: New Debug Setting
+  m_Name: SurfaceDebug
   m_EditorClassIdentifier: 
   test: 0
   showCube: 1
-  showCubeResolution: 21
+  showCubeResolution: 1
   density: 2

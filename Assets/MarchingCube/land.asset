@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: land
   m_EditorClassIdentifier: 
   resolution: 24
-  roughness: 1.73
+  roughness: 0.72
   offset: {x: 0, y: 0, z: 0}
   type: 0
   cubeSize: 1

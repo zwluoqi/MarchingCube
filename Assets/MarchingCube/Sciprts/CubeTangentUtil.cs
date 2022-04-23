@@ -44,7 +44,7 @@ namespace MarchingCube.Sciprts
                 fun(0);
             }
             
-            File.WriteAllText(shapeSetting.resolution+"_result.txt",stringBuilder.ToString());
+            // File.WriteAllText(shapeSetting.resolution+"_result.txt",stringBuilder.ToString());
             return vector3S;
         }
 

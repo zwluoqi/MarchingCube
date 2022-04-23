@@ -10,6 +10,7 @@ namespace MarchingCube.Sciprts
 
         public MarchingCubeMesh marchingCubeMesh;
         private Editor shapeEditor;
+        private Editor debugEditor;
         private void OnEnable()
         {
             marchingCubeMesh = target as MarchingCubeMesh;
@@ -22,6 +23,8 @@ namespace MarchingCube.Sciprts
             base.OnInspectorGUI();
             DrawSettingEditor(marchingCubeMesh.shapeSetting, marchingCubeMesh.OnShapeSetttingUpdated,
                 ref marchingCubeMesh.shapeSetttingsFoldOut, ref shapeEditor);
+            DrawSettingEditor(marchingCubeMesh.debugSetting, marchingCubeMesh.OnDebugSetttingUpdated,
+                ref marchingCubeMesh.debugSetttingsFoldOut, ref debugEditor);
         }
         
         private void DrawSettingEditor(ScriptableObject planetMeshShapeSettting, Action onShapeSetttingUpdated, ref bool planetMeshShpaeSetttingsFoldOut, ref Editor editor)
