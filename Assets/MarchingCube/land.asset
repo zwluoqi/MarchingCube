@@ -14,8 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gpu: 1
   computeShader: {fileID: 7200000, guid: 29ec9226f689d473684a93e3c91f9771, type: 3}
-  resolution: 112
-  roughness: 0.1
-  offset: {x: 0, y: 0, z: 0}
+  resolution:
+    x: 128
+    y: 32
+    z: 128
+  roughness: 0.57
+  strength: 2
+  offset: {x: 0, y: 1, z: 0}
   type: 0
   cubeSize: 0.1

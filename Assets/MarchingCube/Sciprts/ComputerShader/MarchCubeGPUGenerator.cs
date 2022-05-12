@@ -99,8 +99,12 @@ namespace MarchingCube.Sciprts
         
         private readonly int ResolutionID = Shader.PropertyToID("Resolution");
         private readonly int roughnessID = Shader.PropertyToID("roughness");
+        private readonly int strengthID = Shader.PropertyToID("strength");
+        
         private readonly int cubeSizeID = Shader.PropertyToID("cubeSize");
         private readonly int offsetID = Shader.PropertyToID("offset");
+        private readonly int objPosID = Shader.PropertyToID("objPos");
+        
         private readonly int shapetypeID = Shader.PropertyToID("shapetype");
         private readonly int densityID = Shader.PropertyToID("density");
         
@@ -114,7 +118,7 @@ namespace MarchingCube.Sciprts
             _meshDataComputerBuffer.CreateShapeBuffer();
         }
         
-        public MeshData UpdateShape(ShapeSetting shapeSetting,DebugSetting debugSetting)
+        public MeshData UpdateShape(ShapeSetting shapeSetting,DebugSetting debugSetting,Vector3 pos)
         {
             // if (shapeSetting.resolution < 8)
             // {
@@ -124,9 +128,11 @@ namespace MarchingCube.Sciprts
             
             var computeShader = shapeSetting.computeShader;
 
-            computeShader.SetInt(ResolutionID, shapeSetting.resolution);
+            computeShader.SetVector(ResolutionID, new float4(shapeSetting.resolution.xyzx));
             computeShader.SetFloat(roughnessID, shapeSetting.roughness);
+            computeShader.SetFloat(strengthID, shapeSetting.strength);
             computeShader.SetVector(offsetID, shapeSetting.offset);
+            computeShader.SetVector(objPosID, pos);
             computeShader.SetInt(shapetypeID, (int)shapeSetting.type);
             computeShader.SetFloat(cubeSizeID, shapeSetting.cubeSize);
             computeShader.SetInt(densityID, debugSetting.density);
@@ -139,7 +145,7 @@ namespace MarchingCube.Sciprts
             var edgeDataBuffers = new ComputeBuffer(1024*128,3*4, ComputeBufferType.Append);
             computeShader.SetBuffer(kernelVertices,edgeDatasID,edgeDataBuffers);
             
-            computeShader.Dispatch(kernelVertices, shapeSetting.resolution, shapeSetting.resolution, shapeSetting.resolution);
+            computeShader.Dispatch(kernelVertices, shapeSetting.resolution.x, shapeSetting.resolution.y, shapeSetting.resolution.z);
 
             var count = GetComputerBufferWriteCount(_meshDataComputerBuffer._bufferVertices);
             Debug.Log( " _bufferTriangles: " +count);

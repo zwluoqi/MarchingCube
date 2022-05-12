@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   test: 0
   showCube: 0
-  showCubeResolution: 28
+  showCubeResolution: 32
   density: 2

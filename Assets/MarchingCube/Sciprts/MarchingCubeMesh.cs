@@ -15,21 +15,27 @@ public class MarchingCubeMesh : MonoBehaviour
     public ShapeSetting shapeSetting;
     public DebugSetting debugSetting;
     
-    CubeTangentUtil cubeTangentUtil = new CubeTangentUtil();
-    private MarchCubeGPUGenerator _marchCubeGPUGenerator = new MarchCubeGPUGenerator();
+    MarchCubeCPUGenerator _marchCubeCPUGenerator = new MarchCubeCPUGenerator();
+    MarchCubeGPUGenerator _marchCubeGPUGenerator = new MarchCubeGPUGenerator();
 
     [NonSerialized]
     public bool shapeSetttingsFoldOut;
     [NonSerialized]
     public bool debugSetttingsFoldOut;
 
-    
+
+    private void OnDestroy()
+    {
+        _marchCubeGPUGenerator.Dispose();
+    }
+
     public void GenerateMesh()
     {
+        System.DateTime start = System.DateTime.Now;
         List<Vector3> vector3s = null;
         if (debugSetting.test)
         {
-            vector3s = cubeTangentUtil.GenerateCubeByDensity(debugSetting.density);
+            vector3s = _marchCubeCPUGenerator.GenerateCubeByDensity(debugSetting.density);
             Debug.Log("vertex:"+vector3s[0].ToString()+" "+vector3s[1].ToString()+" "+vector3s[2].ToString());
 
         }
@@ -37,15 +43,15 @@ public class MarchingCubeMesh : MonoBehaviour
         {
             if (shapeSetting.computeShader == null || !shapeSetting.gpu)
             {
-                vector3s = cubeTangentUtil.GetVertex(shapeSetting);
+                vector3s = _marchCubeCPUGenerator.GetVertex(shapeSetting);
             }
             else
             {
                 vector3s = new List<Vector3>();
-                var _meshData = _marchCubeGPUGenerator.UpdateShape(shapeSetting,debugSetting);
-                // vector3s.Add(_meshData.vertices[0].a);
-                // vector3s.Add(_meshData.vertices[0].b);
-                // vector3s.Add(_meshData.vertices[0].c);
+                
+                var _meshData = _marchCubeGPUGenerator.UpdateShape(shapeSetting,debugSetting,this.transform.position);
+                System.DateTime end = System.DateTime.Now;
+                Debug.LogWarning((end-start).TotalMilliseconds+"ms");
                 for (int i = 0; i < _meshData.vertices.Length; i++)
                 {
                     vector3s.Add(_meshData.vertices[i].a);
@@ -85,6 +91,8 @@ public class MarchingCubeMesh : MonoBehaviour
 
         sharedMesh.triangles = vector3s.Select(((vector3, i) => i)).ToArray();
         sharedMesh.RecalculateNormals();
+        System.DateTime end2 = System.DateTime.Now;
+        Debug.LogWarning((end2-start).TotalMilliseconds+"ms");
     }
 
 
@@ -111,11 +119,11 @@ public class MarchingCubeMesh : MonoBehaviour
             Vector3 startPos = Vector3.one * shapeSetting.cubeSize * 0.5f + this.transform.position;
             Gizmos.color = Color.red;
 
-            for (int x = 0; x < shapeSetting.resolution; x++)
+            for (int x = 0; x < shapeSetting.resolution.x; x++)
             {
-                for (int y = 0; y < shapeSetting.resolution; y++)
+                for (int y = 0; y < shapeSetting.resolution.y; y++)
                 {
-                    for (int z = 0; z < shapeSetting.resolution; z++)
+                    for (int z = 0; z < shapeSetting.resolution.z; z++)
                     {
                         var offset = new Vector3(x, y, z) * shapeSetting.cubeSize;
                         // DrawCube(cubePos, offset);
@@ -145,9 +153,13 @@ public class MarchingCubeMesh : MonoBehaviour
     {
         if (debugSetting.showCube)
         {
-            // shapeSetting.resolution = debugSetting.showCubeResolution;
             GenerateMesh();
         }
+    }
+
+    public void OnPositionUpdated()
+    {
+        // GenerateMesh();
     }
 }
 

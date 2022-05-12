@@ -8,8 +8,9 @@ struct ShapeSetting
 {
     float roughness;
     float cubeSize;
-    float offset;
+    float3 offset;
     int type;
+    float3 strength;
 };
 
 struct TriangleXXOO
@@ -19,14 +20,19 @@ struct TriangleXXOO
     float3 c;
 };
 
+//等于0位曲面边界
+
 float KeyCircle(float3 pos)
 {
     return length(pos - float3(1,1,1)) - 0.5f;
 }
 
-float KeyNoise(float3 pos)
+float KeyNoise(float strength,float3 pos,float height)
 {
-    return pos.y - snoise(pos);
+    float s =  snoise(float3(pos.x,0,pos.z));
+    s = s*0.5+0.5;
+    s *= strength;
+    return height-s;
 }
 
 float KeyMathSin(float3 pos)
@@ -40,25 +46,7 @@ float KeyMathSin(float3 pos)
 
 
 
-float3 VertexInterp(float3 p1, float3 p2, int v1, int v2, int isoVal)
-{
-    if (isoVal == v1)
-    {
-        return p1;
-    }
-    if (isoVal == v2)
-    {
-        return p2;
-    }
 
-    if (v1 == v2)
-    {
-        return p2;
-    }
-
-    float t = (isoVal - v1)*1.0f / (v2 - v1);
-    return lerp(p1, p2, t);
-}
 
 
 #endif

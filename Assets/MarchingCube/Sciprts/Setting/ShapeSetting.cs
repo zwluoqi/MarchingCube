@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Mathematics;
+using UnityEngine;
 
 namespace MarchingCube.Sciprts
 {
@@ -7,9 +8,11 @@ namespace MarchingCube.Sciprts
     {
         public bool gpu = true;
         public ComputeShader computeShader;
-        [Range(1,128)]
-        public int resolution = 2;
+        // [Range(1,128)]
+        [SerializeField]
+        public int3 resolution = new int3(8,8,8);
         public float roughness = 1;
+        public float strength = 1;
         public Vector3 offset;
         public ShapeType type;
         public float cubeSize = 1;

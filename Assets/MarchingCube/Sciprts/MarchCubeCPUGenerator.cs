@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace MarchingCube.Sciprts
 {
-    public class CubeTangentUtil
+    public class MarchCubeCPUGenerator
     {
 
 
@@ -18,12 +18,12 @@ namespace MarchingCube.Sciprts
             // var cubePos = GetCubePos(pos,scale);
 
                         
-            for (int y = 0; y < shapeSetting.resolution; y++)
+            for (int y = 0; y < shapeSetting.resolution.y; y++)
             {
-                for (int x = 0; x < shapeSetting.resolution; x++)
+                for (int x = 0; x < shapeSetting.resolution.x; x++)
                 {
                     {
-                        for (int z = 0; z < shapeSetting.resolution; z++)
+                        for (int z = 0; z < shapeSetting.resolution.z; z++)
                         {
                             var offset = new Vector3(x, y, z);
                             GenerateCube(ref vector3S, offset, shapeSetting);

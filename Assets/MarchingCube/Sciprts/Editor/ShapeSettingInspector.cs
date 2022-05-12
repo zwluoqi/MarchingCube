@@ -17,6 +17,7 @@ namespace MarchingCube.Sciprts
             ;
         }
 
+        private Vector3 pos;
         public override void OnInspectorGUI()
         {
             
@@ -25,6 +26,10 @@ namespace MarchingCube.Sciprts
                 ref marchingCubeMesh.shapeSetttingsFoldOut, ref shapeEditor);
             DrawSettingEditor(marchingCubeMesh.debugSetting, marchingCubeMesh.OnDebugSetttingUpdated,
                 ref marchingCubeMesh.debugSetttingsFoldOut, ref debugEditor);
+            if (pos != ((MarchingCubeMesh) target).transform.position)
+            {
+                marchingCubeMesh.OnPositionUpdated();
+            }
         }
         
         private void DrawSettingEditor(ScriptableObject planetMeshShapeSettting, Action onShapeSetttingUpdated, ref bool planetMeshShpaeSetttingsFoldOut, ref Editor editor)

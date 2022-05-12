@@ -9,12 +9,14 @@
 AppendStructuredBuffer<TriangleXXOO> vertices;
 AppendStructuredBuffer<float3> edgeDatas;
 
-int Resolution;
+float3 Resolution;
 float roughness;
 float cubeSize;
-float offset;
+float3 offset;
 int shapetype;
+float strength;
 int density;
+float3 objPos;
 Buffer<int> vertexMapping;//[8];
 StructuredBuffer<float4> pointTable;//[8];
 // int triTable[256*16];//越界
@@ -23,9 +25,27 @@ Buffer<int> edgeMaskTable;//[256];
 Buffer<int> edgeTable;//[12*2];
 
 
+float3 VertexInterp(float3 p1, float3 p2, int v1, int v2, int isoVal)
+{
+    if (isoVal == v1)
+    {
+        return p1;
+    }
+    if (isoVal == v2)
+    {
+        return p2;
+    }
 
+    if (v1 == v2)
+    {
+        return p2;
+    }
 
-void GenerateCube(float3 offset,ShapeSetting shapeSetting)
+    float t = (isoVal - v1)*1.0f / (v2 - v1);
+    return lerp(p1, p2, t);
+}
+
+void GenerateCube(float3 pos,float3 obj_pos,ShapeSetting shapeSetting)
 {
     //TODO
     // var vertexMapping = vertexMapping;
@@ -41,14 +61,15 @@ void GenerateCube(float3 offset,ShapeSetting shapeSetting)
     {
         int vertex = vertexMapping[i];
         float noiseValue = 0;
-        float3 x = shapeSetting.roughness * (pointTable[vertex] + offset) + shapeSetting.offset;
+        float3 relativePos = (pointTable[vertex] + pos)*shapeSetting.cubeSize + obj_pos;
+        float height = relativePos.y+shapeSetting.offset.y;
+        float3 x = shapeSetting.roughness * relativePos + shapeSetting.offset;
         if (shapeSetting.type == 0)
         {
-            noiseValue = KeyNoise(x);
+            noiseValue = KeyNoise(shapeSetting.strength,x,height);
         }
         else if(shapeSetting.type == 1)
         {
-            x *= shapeSetting.cubeSize; 
             noiseValue = KeyCircle(x);
         }
         else if(shapeSetting.type == 2)
@@ -124,7 +145,7 @@ void GenerateCube(float3 offset,ShapeSetting shapeSetting)
         {
             break;
         }
-        float3 vertex = (interpVertices[edgeIndex] + offset)*shapeSetting.cubeSize;
+        float3 vertex = (interpVertices[edgeIndex] + pos)*shapeSetting.cubeSize;
         triangles[triangleCount] = vertex;
         triangleCount++;
     }
@@ -198,8 +219,8 @@ void CSMainVertices (uint3 id : SV_DispatchThreadID)
     shape_setting.cubeSize = cubeSize;
     shape_setting.offset = offset;
     shape_setting.type = shapetype;
-    
-    GenerateCube(id,shape_setting);
+    shape_setting.strength = strength;
+    GenerateCube(id,objPos,shape_setting);
 
     // GenerateCubeByDensity(id,density);
 }
