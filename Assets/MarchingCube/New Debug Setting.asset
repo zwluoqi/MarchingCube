@@ -15,4 +15,4 @@ MonoBehaviour:
   test: 0
   showCube: 1
   showCubeResolution: 21
-  density: 2
+  density: 1

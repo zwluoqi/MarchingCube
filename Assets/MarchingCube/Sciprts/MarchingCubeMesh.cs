@@ -16,21 +16,45 @@ public class MarchingCubeMesh : MonoBehaviour
     public DebugSetting debugSetting;
     
     CubeTangentUtil cubeTangentUtil = new CubeTangentUtil();
+    private MarchCubeGPUGenerator _marchCubeGPUGenerator = new MarchCubeGPUGenerator();
+
     [NonSerialized]
     public bool shapeSetttingsFoldOut;
     [NonSerialized]
     public bool debugSetttingsFoldOut;
 
+    
     public void GenerateMesh()
     {
         List<Vector3> vector3s = null;
         if (debugSetting.test)
         {
             vector3s = cubeTangentUtil.GenerateCubeByDensity(debugSetting.density);
+            Debug.Log("vertex:"+vector3s[0].ToString()+" "+vector3s[1].ToString()+" "+vector3s[2].ToString());
+
         }
         else
         {
-            vector3s = cubeTangentUtil.GetVertex( shapeSetting);
+            if (shapeSetting.computeShader == null || !shapeSetting.gpu)
+            {
+                vector3s = cubeTangentUtil.GetVertex(shapeSetting);
+            }
+            else
+            {
+                vector3s = new List<Vector3>();
+                var _meshData = _marchCubeGPUGenerator.UpdateShape(shapeSetting,debugSetting);
+                // vector3s.Add(_meshData.vertices[0].a);
+                // vector3s.Add(_meshData.vertices[0].b);
+                // vector3s.Add(_meshData.vertices[0].c);
+                for (int i = 0; i < _meshData.vertices.Length; i++)
+                {
+                    vector3s.Add(_meshData.vertices[i].a);
+                    vector3s.Add(_meshData.vertices[i].b);
+                    vector3s.Add(_meshData.vertices[i].c);
+                }
+            }
+
+            // vector3s = ;
         }
 
         // var 
@@ -66,6 +90,10 @@ public class MarchingCubeMesh : MonoBehaviour
 
     private void OnValidate()
     {
+        if (!gameObject.activeInHierarchy)
+        {
+            return;
+        }
         GenerateMesh();
     }
 
@@ -117,7 +145,7 @@ public class MarchingCubeMesh : MonoBehaviour
     {
         if (debugSetting.showCube)
         {
-            shapeSetting.resolution = debugSetting.showCubeResolution;
+            // shapeSetting.resolution = debugSetting.showCubeResolution;
             GenerateMesh();
         }
     }

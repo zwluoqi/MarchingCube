@@ -1,0 +1,206 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMainVertices
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+// RWTexture2D<float4> Result;
+#include "MarchCubeGenerator.hlsl"
+
+AppendStructuredBuffer<TriangleXXOO> vertices;
+AppendStructuredBuffer<float3> edgeDatas;
+
+int Resolution;
+float roughness;
+float cubeSize;
+float offset;
+int shapetype;
+int density;
+Buffer<int> vertexMapping;//[8];
+StructuredBuffer<float4> pointTable;//[8];
+// int triTable[256*16];//越界
+Buffer<int> triTable;//256*16
+Buffer<int> edgeMaskTable;//[256];
+Buffer<int> edgeTable;//[12*2];
+
+
+
+
+void GenerateCube(float3 offset,ShapeSetting shapeSetting)
+{
+    //TODO
+    // var vertexMapping = vertexMapping;
+    // var edgeMaskTable = edgeMaskTable;
+    // var pointTable = pointTable;
+    int density = 0;
+    int isoVal = 0;
+    float3 interpVertices[12];
+    int values[8];
+
+    
+    for (int i = 0; i < 8; i++)
+    {
+        int vertex = vertexMapping[i];
+        float noiseValue = 0;
+        float3 x = shapeSetting.roughness * (pointTable[vertex] + offset) + shapeSetting.offset;
+        if (shapeSetting.type == 0)
+        {
+            noiseValue = KeyNoise(x);
+        }
+        else if(shapeSetting.type == 1)
+        {
+            x *= shapeSetting.cubeSize; 
+            noiseValue = KeyCircle(x);
+        }
+        else if(shapeSetting.type == 2)
+        {
+            noiseValue = KeyMathSin(x);
+        }
+        
+        values[vertex] = (int)(noiseValue*255);
+        if (values[vertex] < isoVal)
+        {
+            density += (1 << vertex);
+        }
+    }
+
+
+    if (edgeMaskTable[density] == 0)
+    {
+        return;
+    }
+
+
+
+    // var triTable = MarchingCubeLookupTable.triTable;
+    // var edgeTable = MarchingCubeLookupTable.edgeTable;
+    
+    /* Find the vertices where the surface intersects the cube */
+    if ((edgeMaskTable[density] & 1) != 0)
+        interpVertices[0] = VertexInterp(pointTable[0], pointTable[1], values[0], values[1], isoVal);
+
+    if ((edgeMaskTable[density] & 2) != 0)
+        interpVertices[1] = VertexInterp(pointTable[1], pointTable[2], values[1], values[2], isoVal);
+
+    if ((edgeMaskTable[density] & 4) != 0)
+        interpVertices[2] =
+            VertexInterp(pointTable[2], pointTable[3], values[2], values[3], isoVal);
+
+    if ((edgeMaskTable[density] & 8) != 0)
+        interpVertices[3] =
+            VertexInterp(pointTable[3], pointTable[0], values[3], values[0], isoVal);
+
+    if ((edgeMaskTable[density] & 16) != 0)
+        interpVertices[4] =
+            VertexInterp(pointTable[4], pointTable[5], values[4], values[5], isoVal);
+
+    if ((edgeMaskTable[density] & 32) != 0)
+        interpVertices[5] = VertexInterp(pointTable[5], pointTable[6], values[5], values[6], isoVal);
+
+    if ((edgeMaskTable[density] & 64) != 0)
+        interpVertices[6] = VertexInterp(pointTable[6], pointTable[7], values[6], values[7], isoVal);
+
+    if ((edgeMaskTable[density] & 128) != 0)
+        interpVertices[7] = VertexInterp(pointTable[7], pointTable[4], values[7], values[4], isoVal);
+
+    if ((edgeMaskTable[density] & 256) != 0)
+        interpVertices[8] = VertexInterp(pointTable[0], pointTable[4], values[0], values[4], isoVal);
+
+    if ((edgeMaskTable[density] & 512) != 0)
+        interpVertices[9] = VertexInterp(pointTable[1], pointTable[5], values[1], values[5], isoVal);
+
+    if ((edgeMaskTable[density] & 1024) != 0)
+        interpVertices[10] = VertexInterp(pointTable[2], pointTable[6], values[2], values[6], isoVal);
+
+    if ((edgeMaskTable[density] & 2048) != 0)
+        interpVertices[11] = VertexInterp(pointTable[3], pointTable[7], values[3], values[7], isoVal);
+
+    float3 triangles[15];
+    int triangleCount = 0;
+    for (uint ui = 0; ui < 16; ui++)
+    {
+        int edgeIndex = triTable[density*16+ui];
+
+        if (edgeIndex == -1)
+        {
+            break;
+        }
+        float3 vertex = (interpVertices[edgeIndex] + offset)*shapeSetting.cubeSize;
+        triangles[triangleCount] = vertex;
+        triangleCount++;
+    }
+    for(int j = triangleCount-1;j>=0;j-=3)
+    {
+        TriangleXXOO xxoo = (TriangleXXOO)0;
+        xxoo.a = triangles[j];
+        xxoo.b = triangles[j-1];
+        xxoo.c = triangles[j-2];
+        vertices.Append(xxoo);
+    }
+}
+
+void GenerateCubeByDensity(uint3 id,int density)
+{
+    float3 triangles[15];
+    int triangleCount = 0;
+
+    
+    for (uint i = 0; i < 16; i+=1)
+    {
+        int edgeIndex = triTable[density*16+i];
+        if (edgeIndex == -1)
+        {
+            break;
+        }
+        
+        int point0 = edgeTable[edgeIndex*2+0];
+        int point1 = edgeTable[edgeIndex*2+1];
+        // edgeDatas.Append(float3(edgeIndex,point0,point1));
+        // edgeDatas.Append(pointTable[point0].xyz);
+        // edgeDatas.Append(pointTable[point1].xyz);
+        //
+        float3 vertex = pointTable[point0].xyz + pointTable[point1].xyz;
+        triangles[triangleCount] = vertex* 0.5f;
+        triangleCount++;
+        
+    }
+    // edgeDatas.Append(float3(triangleCount,triangleCount,triangleCount));
+
+    TriangleXXOO xxoo = (TriangleXXOO)0;
+    for(int j = triangleCount-1;j>=0;j-=3)
+    {
+        xxoo.a = triangles[j]+id;
+        xxoo.b = triangles[j-1]+id;
+        xxoo.c = triangles[j-2]+id;
+        vertices.Append(xxoo);
+    }
+}
+
+
+
+
+[numthreads(1,1,1)]
+void CSMainVertices (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+
+    // vertexs. = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+    // TriangleXXOO xxoo = (TriangleXXOO)0;
+    // float3 center = id;
+    // float3 right = (id+uint3(1,0,0));
+    // float3 forward = (id+uint3(1,0,1));
+    // xxoo.a = center;
+    // xxoo.b = forward;
+    // xxoo.c = right;
+    // vertices.Append(xxoo);
+    //
+    ShapeSetting shape_setting = (ShapeSetting)0;
+    shape_setting.roughness = roughness;
+    shape_setting.cubeSize = cubeSize;
+    shape_setting.offset = offset;
+    shape_setting.type = shapetype;
+    
+    GenerateCube(id,shape_setting);
+
+    // GenerateCubeByDensity(id,density);
+}
+

@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05fdf8b0568c4d0e9466ee6e80e98a6a, type: 3}
   m_Name: Surface
   m_EditorClassIdentifier: 
-  resolution: 45
-  roughness: 1
+  computeShader: {fileID: 0}
+  resolution: 40
+  roughness: 1.6
   offset: {x: 0, y: 0, z: 0}
   type: 2
-  cubeSize: 0.1
+  cubeSize: 1

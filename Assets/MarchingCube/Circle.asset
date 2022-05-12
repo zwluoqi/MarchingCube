@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05fdf8b0568c4d0e9466ee6e80e98a6a, type: 3}
   m_Name: Circle
   m_EditorClassIdentifier: 
+  computeShader: {fileID: 0}
   resolution: 20
   roughness: 1
   offset: {x: 0, y: 0, z: 0}

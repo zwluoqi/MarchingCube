@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: landDebug
   m_EditorClassIdentifier: 
   test: 0
-  showCube: 1
-  showCubeResolution: 20
+  showCube: 0
+  showCubeResolution: 28
   density: 2

@@ -18,30 +18,18 @@ namespace MarchingCube.Sciprts
             // var cubePos = GetCubePos(pos,scale);
 
                         
-            Action<int> fun = delegate(int y)
+            for (int y = 0; y < shapeSetting.resolution; y++)
             {
                 for (int x = 0; x < shapeSetting.resolution; x++)
                 {
                     {
                         for (int z = 0; z < shapeSetting.resolution; z++)
                         {
-                            var offset = new Vector3(x, y, z) * shapeSetting.cubeSize;
+                            var offset = new Vector3(x, y, z);
                             GenerateCube(ref vector3S, offset, shapeSetting);
                         }
                     }
                 }
-            };
-            
-            if (shapeSetting.resolution>0)
-            {
-                for (int y = 0; y < shapeSetting.resolution; y++)
-                {
-                    fun(y);
-                }
-            }
-            else
-            {
-                fun(0);
             }
             
             // File.WriteAllText(shapeSetting.resolution+"_result.txt",stringBuilder.ToString());
@@ -85,13 +73,14 @@ namespace MarchingCube.Sciprts
             {
                 var vertex = vertexMapping[i];
                 float noiseValue = 0;
-                var x = shapeSetting.roughness * (pointTable[vertex]*shapeSetting.cubeSize + offset) + shapeSetting.offset;
+                var x = shapeSetting.roughness * (pointTable[vertex] + offset) + shapeSetting.offset;
                 if (shapeSetting.type == ShapeType.Noise)
                 {
                     noiseValue = KeyFun2(x);
                 }
                 else if(shapeSetting.type == ShapeType.Circle)
                 {
+                    x *= shapeSetting.cubeSize;
                     noiseValue = KeyFun(x);
                 }
                 else if(shapeSetting.type == ShapeType.SinSurface)
@@ -115,7 +104,7 @@ namespace MarchingCube.Sciprts
 
 
             var triTable = MarchingCubeLookupTable.triTable;
-            var edgeTable = MarchingCubeLookupTable.edgeTable;
+            // var edgeTable = MarchingCubeLookupTable.edgeTable;
             
             /* Find the vertices where the surface intersects the cube */
             if ((edgeMaskTable[density] & 1) != 0)
@@ -157,7 +146,7 @@ namespace MarchingCube.Sciprts
             if ((edgeMaskTable[density] & 2048) != 0)
                 interpVertices[11] = VertexInterp(pointTable[3], pointTable[7], values[3], values[7], isoVal);
 
-            List<Vector3> tangents = new List<Vector3>();
+            List<Vector3> triangles = new List<Vector3>();
             for (int i = 0; i < 16; i++)
             {
                 var edgeIndex = triTable[density, i];
@@ -166,35 +155,13 @@ namespace MarchingCube.Sciprts
                     break;
                 }
 
-                tangents.Add(interpVertices[edgeIndex]*shapeSetting.cubeSize + offset);
+                triangles.Add((interpVertices[edgeIndex] + offset)*shapeSetting.cubeSize);
             }
 
-            tangents.Reverse();
-            vertexs.AddRange(tangents);
+            triangles.Reverse();
+            vertexs.AddRange(triangles);
         }
         
-        public List<Vector3> GenerateCubeByDensity(int density)
-        {
-            List<Vector3> vector3s = new List<Vector3>();
-            var triTable = MarchingCubeLookupTable.triTable;
-            var edgeTable = MarchingCubeLookupTable.edgeTable;
-            var pointTable = MarchingCubeLookupTable.pointTable;
-            for (int i = 0; i < 16; i++)
-            {
-                var edgeIndex = triTable[density, i];
-                if (edgeIndex == -1)
-                {
-                    break;
-                }
-
-                var point0 = edgeTable[edgeIndex,0];
-                var point1 = edgeTable[edgeIndex,1];
-                var pos = pointTable[point0] + pointTable[point1];
-                vector3s.Add(pos * 0.5f);
-            }
-            //vector3s.Reverse();
-            return vector3s;
-        }
 
          private Vector3 VertexInterp(Vector3 p1, Vector3 p2, int v1, int v2, int isoVal)
          {
@@ -215,5 +182,35 @@ namespace MarchingCube.Sciprts
              float t = (isoVal - v1)*1.0f / (v2 - v1);
              return Vector3.Lerp(p1, p2, t);
          }
+
+         
+         #region Test
+         public List<Vector3> GenerateCubeByDensity(int density)
+         {
+             List<Vector3> vector3s = new List<Vector3>();
+             var triTable = MarchingCubeLookupTable.triTable;
+             var edgeTable = MarchingCubeLookupTable.edgeTable;
+             var pointTable = MarchingCubeLookupTable.pointTable;
+             for (int i = 0; i < 16; i++)
+             {
+                 var edgeIndex = triTable[density, i];
+                 if (edgeIndex == -1)
+                 {
+                     break;
+                 }
+
+                 var point0 = edgeTable[edgeIndex,0];
+                 var point1 = edgeTable[edgeIndex,1];
+                 var pos = pointTable[point0] + pointTable[point1];
+                 vector3s.Add(pos * 0.5f);
+             }
+             //vector3s.Reverse();
+             return vector3s;
+         }
+
+         #endregion
+         
+         
+         
     }
 }

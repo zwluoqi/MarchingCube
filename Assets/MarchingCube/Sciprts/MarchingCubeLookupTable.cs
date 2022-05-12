@@ -343,4 +343,48 @@ public static class MarchingCubeLookupTable
         6,
         5
     };
+    
+    
+    
+    public static Vector4[] ToV4Array(this Vector3[] vector3s)
+    {
+        Vector4[] vector4s = new Vector4[vector3s.Length];
+        for (int i = 0; i < vector3s.Length; i++)
+        {
+            vector4s[i] = vector3s[i];
+        }
+
+        return vector4s;
+    }
+
+    public static int[] ToInts(this int[,] array)
+    {
+        var row = array.GetLength(0);
+        var col = array.GetLength(1);
+        int[] xxoo = new int[row*col];
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < col; j++)
+            {
+                xxoo[i * col + j] = array[i, j];
+            }
+        }
+
+        return xxoo;
+    }
+
+    public static Matrix4x4[] ToMatrixs(this int[,] array)
+    {
+        var length = array.GetLength(0);
+        Matrix4x4[] matrix4X4s = new Matrix4x4[length];
+        for (int i = 0; i <length; i++)
+        {
+            for (int j = 0; j < 16; j++)
+            {
+                matrix4X4s[i][j] = array[i,j];    
+            }
+        }
+
+        return matrix4X4s;
+    }
 }
