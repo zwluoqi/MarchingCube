@@ -5,8 +5,9 @@ using System.Linq;
 using MarchingCube.Sciprts;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityTools.MeshTools;
 
-public class MarchingCubeMesh : MonoBehaviour
+public class MarchingCubeMesh : MonoBehaviour,ISettingUpdate
 {
 
     public MeshFilter meshFilter;
@@ -14,16 +15,16 @@ public class MarchingCubeMesh : MonoBehaviour
     
     public ShapeSetting shapeSetting;
     public DebugSetting debugSetting;
+    public ColorSetting colorSetting;
     
     MarchCubeCPUGenerator _marchCubeCPUGenerator = new MarchCubeCPUGenerator();
     MarchCubeGPUGenerator _marchCubeGPUGenerator = new MarchCubeGPUGenerator();
 
-    [NonSerialized]
-    public bool shapeSetttingsFoldOut;
-    [NonSerialized]
-    public bool debugSetttingsFoldOut;
+    public ColorGenerator colorGenerator = new ColorGenerator();
 
 
+    public Delaunay3DTools.MinMax minMax;
+    
     private void OnDestroy()
     {
         _marchCubeGPUGenerator.Dispose();
@@ -52,12 +53,19 @@ public class MarchingCubeMesh : MonoBehaviour
                 var _meshData = _marchCubeGPUGenerator.UpdateShape(shapeSetting,debugSetting,this.transform.position);
                 System.DateTime end = System.DateTime.Now;
                 Debug.LogWarning((end-start).TotalMilliseconds+"ms");
+                minMax = new Delaunay3DTools.MinMax();
                 for (int i = 0; i < _meshData.vertices.Length; i++)
                 {
                     vector3s.Add(_meshData.vertices[i].a);
                     vector3s.Add(_meshData.vertices[i].b);
                     vector3s.Add(_meshData.vertices[i].c);
+                    minMax.AddValue(_meshData.vertices[i].a.y);
+                    minMax.AddValue(_meshData.vertices[i].b.y);
+                    minMax.AddValue(_meshData.vertices[i].c.y);
                 }
+                System.DateTime t2v = System.DateTime.Now;
+                Debug.LogWarning((t2v-start).TotalMilliseconds+"ms");
+
             }
 
             // vector3s = ;
@@ -96,19 +104,16 @@ public class MarchingCubeMesh : MonoBehaviour
     }
 
 
-    private void OnValidate()
-    {
-        if (!gameObject.activeInHierarchy)
-        {
-            return;
-        }
-        GenerateMesh();
-    }
-
-    public void OnShapeSetttingUpdated()
-    {
-        GenerateMesh();
-    }
+    // private void OnValidate()
+    // {
+    //     if (!gameObject.activeInHierarchy)
+    //     {
+    //         return;
+    //     }
+    //     GenerateMesh();
+    //     colorGenerator.UpdateSetting(colorSetting);
+    //     colorGenerator.SetMeshFilter(minMax.min,minMax.max,meshFilter.GetComponent<MeshRenderer>());
+    // }
 
 
     private void OnDrawGizmos()
@@ -149,7 +154,7 @@ public class MarchingCubeMesh : MonoBehaviour
     }
 
 
-    public void OnDebugSetttingUpdated()
+    public void OnDebugSettingUpdated()
     {
         if (debugSetting.showCube)
         {
@@ -159,7 +164,38 @@ public class MarchingCubeMesh : MonoBehaviour
 
     public void OnPositionUpdated()
     {
-        // GenerateMesh();
+        GenerateMesh();
+        colorGenerator.SetMeshFilter(minMax.min,minMax.max,meshFilter.GetComponent<MeshRenderer>());
+    }
+
+    
+    public void OnShapeSettingUpdated()
+    {
+        GenerateMesh();
+        colorGenerator.SetMeshFilter(minMax.min,minMax.max,meshFilter.GetComponent<MeshRenderer>());
+    }
+
+    
+    public void UpdateSetting(ScriptableObject scriptableObject)
+    {
+        if (scriptableObject is DebugSetting)
+        {
+            OnDebugSettingUpdated();
+        }else if (scriptableObject is ShapeSetting)
+        {
+            OnShapeSettingUpdated();
+        }
+        else if (scriptableObject is ColorSetting)
+        {
+            OnColorSettingUpdated();
+        }
+        colorGenerator.SetMeshFilter(minMax.min,minMax.max,meshFilter.GetComponent<MeshRenderer>());
+    }
+
+    private void OnColorSettingUpdated()
+    {
+        colorGenerator.UpdateSetting(colorSetting);
     }
 }
+
 

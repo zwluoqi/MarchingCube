@@ -8,9 +8,15 @@ struct ShapeSetting
 {
     float roughness;
     float cubeSize;
-    float3 offset;
+    float3 floorOffset;
     int type;
     float3 strength;
+
+    int octaves;
+    float weightMultiplier;
+    float persistence;
+    float lacunarity;
+    float2 sharpenParams;
 };
 
 struct TriangleXXOO
@@ -22,20 +28,51 @@ struct TriangleXXOO
 
 //等于0位曲面边界
 
-float KeyCircle(float3 pos)
+float KeyCircle(float3 pos,ShapeSetting shape_setting)
 {
     return length(pos - float3(1,1,1)) - 0.5f;
 }
 
-float KeyNoise(float strength,float3 pos,float height)
+
+float KeyNoise2(float3 pos,ShapeSetting shape_setting,StructuredBuffer<float3> offsets)
 {
-    float s =  snoise(float3(pos.x,0,pos.z));
-    s = s*0.5+0.5;
-    s *= strength;
-    return height-s;
+    float frequency = shape_setting.roughness*0.01;
+    float amplitude = 1;
+    float weight = 1;
+    float noise = 0;
+    for (int j =0; j < shape_setting.octaves; j++) {
+        float n = snoise((pos) * frequency + offsets[j]);
+        float v = 1-abs(n);
+        v = v*v;
+        v *= weight;
+        weight = max(min(v*shape_setting.weightMultiplier,1),0);
+        noise += v * amplitude;
+        amplitude *= shape_setting.persistence;
+        frequency *= shape_setting.lacunarity;
+    }
+
+    //地面高度调整
+    float finalVal = -(pos.y + shape_setting.floorOffset.y) + noise * 1;
+
+    //梯田
+    float x = max(shape_setting.sharpenParams.x,0.001);
+    finalVal += (fmod(pos.y,x)*x) * shape_setting.sharpenParams.y;
+    
+    return finalVal;
 }
 
-float KeyMathSin(float3 pos)
+float KeyNoise(ShapeSetting shape_setting,float3 pos)
+{
+    float density = 0;
+    //
+    float v = snoise(shape_setting.roughness*float3(pos.x,pos.y,pos.z));
+    v = v*v;
+    v *= shape_setting.strength;
+    density += v;
+    return density-pos.y;
+}
+
+float KeyMathSin(float3 pos,ShapeSetting shape_setting)
 {
     float x = pos.x - 1.0f;
     float y = pos.y - 1.0f;

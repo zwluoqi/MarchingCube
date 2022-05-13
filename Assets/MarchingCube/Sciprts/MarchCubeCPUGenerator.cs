@@ -73,7 +73,7 @@ namespace MarchingCube.Sciprts
             {
                 var vertex = vertexMapping[i];
                 float noiseValue = 0;
-                var x = shapeSetting.roughness * (pointTable[vertex] + offset) + shapeSetting.offset;
+                var x = shapeSetting.roughness * (pointTable[vertex] + offset);
                 if (shapeSetting.type == ShapeType.Noise)
                 {
                     noiseValue = KeyFun2(x);

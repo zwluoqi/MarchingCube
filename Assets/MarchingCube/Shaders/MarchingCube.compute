@@ -5,6 +5,7 @@
 // with cs.SetTexture
 // RWTexture2D<float4> Result;
 #include "MarchCubeGenerator.hlsl"
+//https://developer.nvidia.com/gpugems/gpugems3/part-i-geometry/chapter-1-generating-complex-procedural-terrains-using-gpu
 
 AppendStructuredBuffer<TriangleXXOO> vertices;
 AppendStructuredBuffer<float3> edgeDatas;
@@ -12,10 +13,19 @@ AppendStructuredBuffer<float3> edgeDatas;
 float3 Resolution;
 float roughness;
 float cubeSize;
-float3 offset;
+float3 floorOffset;
+float2 sharpenParams;
+StructuredBuffer<float3> offsets;
 int shapetype;
 float strength;
 int density;
+
+int octaves;
+float weightMultiplier;
+float persistence;
+float lacunarity;
+
+
 float3 objPos;
 Buffer<int> vertexMapping;//[8];
 StructuredBuffer<float4> pointTable;//[8];
@@ -62,19 +72,22 @@ void GenerateCube(float3 pos,float3 obj_pos,ShapeSetting shapeSetting)
         int vertex = vertexMapping[i];
         float noiseValue = 0;
         float3 relativePos = (pointTable[vertex] + pos)*shapeSetting.cubeSize + obj_pos;
-        float height = relativePos.y+shapeSetting.offset.y;
-        float3 x = shapeSetting.roughness * relativePos + shapeSetting.offset;
+        // float height = relativePos.y+shapeSetting.offset.y;
         if (shapeSetting.type == 0)
         {
-            noiseValue = KeyNoise(shapeSetting.strength,x,height);
+            noiseValue = KeyNoise(shapeSetting,relativePos);
         }
         else if(shapeSetting.type == 1)
         {
-            noiseValue = KeyCircle(x);
+            noiseValue = KeyCircle(relativePos,shapeSetting);
         }
         else if(shapeSetting.type == 2)
         {
-            noiseValue = KeyMathSin(x);
+            noiseValue = KeyMathSin(relativePos,shapeSetting);
+        }
+        else if(shapeSetting.type == 3)
+        {
+            noiseValue = KeyNoise2(relativePos,shapeSetting,offsets);
         }
         
         values[vertex] = (int)(noiseValue*255);
@@ -152,9 +165,9 @@ void GenerateCube(float3 pos,float3 obj_pos,ShapeSetting shapeSetting)
     for(int j = triangleCount-1;j>=0;j-=3)
     {
         TriangleXXOO xxoo = (TriangleXXOO)0;
-        xxoo.a = triangles[j];
+        xxoo.c = triangles[j];
         xxoo.b = triangles[j-1];
-        xxoo.c = triangles[j-2];
+        xxoo.a = triangles[j-2];
         vertices.Append(xxoo);
     }
 }
@@ -199,9 +212,12 @@ void GenerateCubeByDensity(uint3 id,int density)
 
 
 
-[numthreads(1,1,1)]
+[numthreads(8,8,8)]
 void CSMainVertices (uint3 id : SV_DispatchThreadID)
 {
+    if (id.x >= Resolution.x || id.y >= Resolution.y || id.z >= Resolution.z) {
+        return;
+    }
     // TODO: insert actual code here!
 
     // vertexs. = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
@@ -217,9 +233,17 @@ void CSMainVertices (uint3 id : SV_DispatchThreadID)
     ShapeSetting shape_setting = (ShapeSetting)0;
     shape_setting.roughness = roughness;
     shape_setting.cubeSize = cubeSize;
-    shape_setting.offset = offset;
     shape_setting.type = shapetype;
     shape_setting.strength = strength;
+    shape_setting.floorOffset = floorOffset;
+    
+    shape_setting.weightMultiplier = weightMultiplier;
+    shape_setting.persistence = persistence;
+    shape_setting.lacunarity = lacunarity;
+    shape_setting.octaves = octaves;
+    shape_setting.sharpenParams = sharpenParams;
+    
+    
     GenerateCube(id,objPos,shape_setting);
 
     // GenerateCubeByDensity(id,density);

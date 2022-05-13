@@ -8,51 +8,24 @@ namespace MarchingCube.Sciprts
     public class ShapeSettingInspector : Editor
     {
 
-        public MarchingCubeMesh marchingCubeMesh;
-        private Editor shapeEditor;
-        private Editor debugEditor;
+        private SettingEditor<MarchingCubeMesh> shapeEdirot;
+
         private void OnEnable()
         {
-            marchingCubeMesh = target as MarchingCubeMesh;
-            ;
+            shapeEdirot = new SettingEditor<MarchingCubeMesh>();
+            shapeEdirot.OnEnable(this);
         }
 
         private Vector3 pos;
         public override void OnInspectorGUI()
         {
-            
             base.OnInspectorGUI();
-            DrawSettingEditor(marchingCubeMesh.shapeSetting, marchingCubeMesh.OnShapeSetttingUpdated,
-                ref marchingCubeMesh.shapeSetttingsFoldOut, ref shapeEditor);
-            DrawSettingEditor(marchingCubeMesh.debugSetting, marchingCubeMesh.OnDebugSetttingUpdated,
-                ref marchingCubeMesh.debugSetttingsFoldOut, ref debugEditor);
-            if (pos != ((MarchingCubeMesh) target).transform.position)
+            shapeEdirot.OnInspectorGUI(this);
+            var dis = Vector3.Distance(pos, ((MarchingCubeMesh) target).transform.position);
+            if (dis > 0.01f)
             {
-                marchingCubeMesh.OnPositionUpdated();
-            }
-        }
-        
-        private void DrawSettingEditor(ScriptableObject planetMeshShapeSettting, Action onShapeSetttingUpdated, ref bool planetMeshShpaeSetttingsFoldOut, ref Editor editor)
-        {
-            if (planetMeshShapeSettting != null)
-            {
-                planetMeshShpaeSetttingsFoldOut =
-                    EditorGUILayout.InspectorTitlebar(planetMeshShpaeSetttingsFoldOut, planetMeshShapeSettting);
-                if (planetMeshShpaeSetttingsFoldOut)
-                {
-                    using (var check = new EditorGUI.ChangeCheckScope())
-                    {
-                        CreateCachedEditor(planetMeshShapeSettting, null, ref editor);
-                        editor.OnInspectorGUI();
-                        if (check.changed)
-                        {
-                            if (onShapeSetttingUpdated != null)
-                            {
-                                onShapeSetttingUpdated();
-                            }
-                        }
-                    }
-                }
+                pos = ((MarchingCubeMesh) target).transform.position;
+                ((MarchingCubeMesh) target).OnPositionUpdated();
             }
         }
 

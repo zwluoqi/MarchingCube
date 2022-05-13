@@ -16,10 +16,21 @@ MonoBehaviour:
   computeShader: {fileID: 7200000, guid: 29ec9226f689d473684a93e3c91f9771, type: 3}
   resolution:
     x: 128
-    y: 32
+    y: 64
     z: 128
-  roughness: 0.57
-  strength: 2
-  offset: {x: 0, y: 1, z: 0}
-  type: 0
-  cubeSize: 0.1
+  roughness: 0.6
+  strength: 10
+  octaves:
+  - {x: 2.07, y: 5.24, z: 2.07}
+  - {x: 5.08, y: 1.62, z: 0.87}
+  - {x: 2.77, y: 0.33, z: 0}
+  - {x: 2.79, y: 1.01, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  weightMultiplier: 2
+  persistence: 2
+  lacunarity: 1.5
+  type: 3
+  cubeSize: 1
+  floorOffset: {x: 0, y: -10, z: 0}
+  sharpenParams: {x: 1.5, y: 1}

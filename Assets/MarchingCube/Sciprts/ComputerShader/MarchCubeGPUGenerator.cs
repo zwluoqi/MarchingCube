@@ -102,7 +102,7 @@ namespace MarchingCube.Sciprts
         private readonly int strengthID = Shader.PropertyToID("strength");
         
         private readonly int cubeSizeID = Shader.PropertyToID("cubeSize");
-        private readonly int offsetID = Shader.PropertyToID("offset");
+        private readonly int offsetID = Shader.PropertyToID("offsets");
         private readonly int objPosID = Shader.PropertyToID("objPos");
         
         private readonly int shapetypeID = Shader.PropertyToID("shapetype");
@@ -131,23 +131,39 @@ namespace MarchingCube.Sciprts
             computeShader.SetVector(ResolutionID, new float4(shapeSetting.resolution.xyzx));
             computeShader.SetFloat(roughnessID, shapeSetting.roughness);
             computeShader.SetFloat(strengthID, shapeSetting.strength);
-            computeShader.SetVector(offsetID, shapeSetting.offset);
+            
             computeShader.SetVector(objPosID, pos);
             computeShader.SetInt(shapetypeID, (int)shapeSetting.type);
             computeShader.SetFloat(cubeSizeID, shapeSetting.cubeSize);
+            computeShader.SetVector("floorOffset", shapeSetting.floorOffset);
+            computeShader.SetVector("sharpenParams",shapeSetting.sharpenParams);
+            
+            computeShader.SetFloat("weightMultiplier", shapeSetting.weightMultiplier);
+            computeShader.SetFloat("persistence", shapeSetting.persistence);
+            computeShader.SetFloat("lacunarity", shapeSetting.lacunarity);
+            computeShader.SetInt("octaves", shapeSetting.octaves.Length);
             computeShader.SetInt(densityID, debugSetting.density);
+            
             
 
             //获取内核函数的索引
             var kernelVertices = computeShader.FindKernel("CSMainVertices");
             SetLookupTableData(computeShader,kernelVertices);
+            
+
+            var offsetComputeBuffer = new ComputeBuffer(shapeSetting.octaves.Length, 3*4, ComputeBufferType.Constant);
+            offsetComputeBuffer.SetData(shapeSetting.octaves);
+            computeShader.SetBuffer(kernelVertices,offsetID, offsetComputeBuffer);
+            
             computeShader.SetBuffer(kernelVertices,verticesID,_meshDataComputerBuffer._bufferVertices);
+            
             var edgeDataBuffers = new ComputeBuffer(1024*128,3*4, ComputeBufferType.Append);
             computeShader.SetBuffer(kernelVertices,edgeDatasID,edgeDataBuffers);
             
-            computeShader.Dispatch(kernelVertices, shapeSetting.resolution.x, shapeSetting.resolution.y, shapeSetting.resolution.z);
+            computeShader.Dispatch(kernelVertices, ((shapeSetting.resolution.x-1)/8+1), ((shapeSetting.resolution.y-1)/8+1), ((shapeSetting.resolution.z-1)/8+1));
 
             var count = GetComputerBufferWriteCount(_meshDataComputerBuffer._bufferVertices);
+
             Debug.Log( " _bufferTriangles: " +count);
             
             
@@ -171,6 +187,9 @@ namespace MarchingCube.Sciprts
             // }
             edgeDataBuffers.Release();
             edgeDataBuffers.Dispose();
+            
+            offsetComputeBuffer.Dispose();
+            offsetComputeBuffer.Release();
             
             return _meshData;
         }
