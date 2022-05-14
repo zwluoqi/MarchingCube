@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3436f1310b47424ba1c558aa65778851, type: 3}
-  m_Name: Color Setting 1
+  m_Name: land Color
   m_EditorClassIdentifier: 
   gradient:
     serializedVersion: 2
-    key0: {r: 0.8396226, g: 0.6737195, b: 0.059407253, a: 1}
-    key1: {r: 0.5834407, g: 0.41131186, b: 0.745283, a: 1}
-    key2: {r: 0, g: 0.6380696, b: 1, a: 0}
-    key3: {r: 0.16019939, g: 0.43997237, b: 0.754717, a: 0}
-    key4: {r: 0.13915095, g: 0.21354534, b: 0.5, a: 0}
-    key5: {r: 0.3688814, g: 0.063412234, b: 0.5377358, a: 0}
-    key6: {r: 0.81960785, g: 0.003921569, b: 0.003921569, a: 0}
-    key7: {r: 0, g: 0, b: 0, a: 0}
+    key0: {r: 0.019090425, g: 0.14871565, b: 0.3679245, a: 1}
+    key1: {r: 0.43805626, g: 0.5657142, b: 0.8679245, a: 1}
+    key2: {r: 0.6698113, g: 0.66702247, b: 0.17377181, a: 0}
+    key3: {r: 0.25844705, g: 0.3584906, b: 0, a: 0}
+    key4: {r: 0.5943396, g: 0.36861122, b: 0.21026166, a: 0}
+    key5: {r: 0.4245283, g: 0.19744574, b: 0.046057325, a: 0}
+    key6: {r: 0.38679248, g: 0.2116821, b: 0.09669812, a: 0}
+    key7: {r: 1, g: 1, b: 1, a: 0}
     ctime0: 1735
     ctime1: 11758
     ctime2: 21203
@@ -41,5 +41,5 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 8
     m_NumAlphaKeys: 2
-  material: {fileID: 2100000, guid: 665a09ea5e8d940bb8274b53efa549f8, type: 2}
-  shaderOffsetParams: {x: 10, y: 70, z: 2}
+  material: {fileID: 2100000, guid: 21d4766b86624433ab7b5c3c5d4b25bf, type: 2}
+  shaderOffsetParams: {x: 10, y: 70.03, z: 2}

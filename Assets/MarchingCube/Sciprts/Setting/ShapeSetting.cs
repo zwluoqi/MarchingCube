@@ -18,11 +18,16 @@ namespace MarchingCube.Sciprts
         public float persistence =1;
         public float lacunarity =1;
         
-        // public Vector3 offset;
+        
         public ShapeType type;
+        [Tooltip("marchingcube遍历尺寸")]
         public float cubeSize = 1;
+        [Tooltip("地面偏移")]
         public Vector3 floorOffset;
+        [Tooltip("梯田")]
         public Vector2 sharpenParams;
+        [Tooltip("噪声XYZ权重")]
+        public Vector3 weightNoise = Vector3.one;
     }
 
     public struct ShapeSettingBuffer

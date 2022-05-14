@@ -143,6 +143,7 @@ namespace MarchingCube.Sciprts
             computeShader.SetFloat("lacunarity", shapeSetting.lacunarity);
             computeShader.SetInt("octaves", shapeSetting.octaves.Length);
             computeShader.SetInt(densityID, debugSetting.density);
+            computeShader.SetVector("weightNoiseXYZ",shapeSetting.weightNoise);
             
             
 

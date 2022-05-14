@@ -2,7 +2,7 @@
 #define QINGZHU_MARCHINGCUBE_GENERATOR
 
 
-#include "MarchingCubeLookupTable.hlsl"
+// #include "MarchingCubeLookupTable.hlsl"
 #include "../NoiseShader/SimplexNoise3D.hlsl"
 struct ShapeSetting
 {
@@ -10,13 +10,14 @@ struct ShapeSetting
     float cubeSize;
     float3 floorOffset;
     int type;
-    float3 strength;
+    float strength;
 
     int octaves;
     float weightMultiplier;
     float persistence;
     float lacunarity;
     float2 sharpenParams;
+    float3 weightNoiseXYZ;
 };
 
 struct TriangleXXOO
@@ -41,7 +42,9 @@ float KeyNoise2(float3 pos,ShapeSetting shape_setting,StructuredBuffer<float3> o
     float weight = 1;
     float noise = 0;
     for (int j =0; j < shape_setting.octaves; j++) {
-        float n = snoise((pos) * frequency + offsets[j]);
+        float3 x = (pos) * frequency + offsets[j];
+        x*= shape_setting.weightNoiseXYZ;
+        float n = snoise(x);
         float v = 1-abs(n);
         v = v*v;
         v *= weight;
