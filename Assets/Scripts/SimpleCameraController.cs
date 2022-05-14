@@ -8,6 +8,9 @@ namespace UnityTemplateProjects
 {
     public class SimpleCameraController : MonoBehaviour
     {
+        public bool autoMove = false;
+        public float autoSpeed = 1;
+        public float rotationSpeed = 1;
         class CameraState
         {
             public float yaw;
@@ -189,21 +192,52 @@ namespace UnityTemplateProjects
                 Cursor.lockState = CursorLockMode.None;
             }
 
-            // Rotation
-            if (IsCameraRotationAllowed())
+           
+            // Translationv
+            Vector3  translation;
+            if (autoMove)
             {
-                var mouseMovement = GetInputLookRotation() * k_MouseSensitivityMultiplier * mouseSensitivity;
-                if (invertY)
-                    mouseMovement.y = -mouseMovement.y;
-                
+                translation = Vector3.forward* Time.deltaTime*autoSpeed;
+                Vector2 mouseMovement = Vector2.zero;
+                if (Input.GetKey(KeyCode.W))
+                {
+                    mouseMovement += Vector2.down;
+                }
+                if (Input.GetKey(KeyCode.S))
+                {
+                    mouseMovement += Vector2.up;
+                }
+                if (Input.GetKey(KeyCode.A))
+                {
+                    mouseMovement += Vector2.left;
+                }
+                if (Input.GetKey(KeyCode.D))
+                {
+                    mouseMovement += Vector2.right;
+                }
+
+                mouseMovement *= rotationSpeed;
                 var mouseSensitivityFactor = mouseSensitivityCurve.Evaluate(mouseMovement.magnitude);
 
                 m_TargetCameraState.yaw += mouseMovement.x * mouseSensitivityFactor;
                 m_TargetCameraState.pitch += mouseMovement.y * mouseSensitivityFactor;
             }
-            
-            // Translation
-            var translation = GetInputTranslationDirection() * Time.deltaTime;
+            else
+            {
+                translation= GetInputTranslationDirection() * Time.deltaTime;
+                // Rotation
+                if (IsCameraRotationAllowed() && !autoMove)
+                {
+                    var mouseMovement = GetInputLookRotation() * k_MouseSensitivityMultiplier * mouseSensitivity;
+                    if (invertY)
+                        mouseMovement.y = -mouseMovement.y;
+                
+                    var mouseSensitivityFactor = mouseSensitivityCurve.Evaluate(mouseMovement.magnitude);
+
+                    m_TargetCameraState.yaw += mouseMovement.x * mouseSensitivityFactor;
+                    m_TargetCameraState.pitch += mouseMovement.y * mouseSensitivityFactor;
+                }
+            }
 
             // Speed up movement when shift key held
             if (IsBoostPressed())
@@ -276,7 +310,7 @@ namespace UnityTemplateProjects
             canRotate |= Gamepad.current != null ? Gamepad.current.rightStick.ReadValue().magnitude > 0 : false;
             return canRotate;
 #else
-            return Input.GetMouseButton(0);
+            return Input.GetMouseButton(1);
 #endif
         }
 

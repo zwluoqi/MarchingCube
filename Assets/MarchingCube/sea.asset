@@ -21,7 +21,7 @@ MonoBehaviour:
   roughness: 6
   strength: 1
   octaves:
-  - {x: 2.07, y: 5.24, z: 2.07}
+  - {x: 2.16, y: 5.24, z: 2.07}
   - {x: 5.08, y: 1.62, z: 0.87}
   - {x: 2.77, y: 0.33, z: 0}
   - {x: 2.79, y: 1.01, z: 0}
@@ -34,3 +34,4 @@ MonoBehaviour:
   cubeSize: 1
   floorOffset: {x: 0, y: -10, z: 0}
   sharpenParams: {x: 1.5, y: 1}
+  weightNoise: {x: 1, y: 1, z: 1}

@@ -42,4 +42,4 @@ MonoBehaviour:
     m_NumColorKeys: 8
     m_NumAlphaKeys: 2
   material: {fileID: 2100000, guid: 665a09ea5e8d940bb8274b53efa549f8, type: 2}
-  shaderOffsetParams: {x: 10, y: 70, z: 2}
+  shaderOffsetParams: {x: 5, y: 66.33, z: 0.5}
