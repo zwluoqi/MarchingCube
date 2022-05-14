@@ -53,3 +53,4 @@ res
 *.app
 obj/Debug/Assembly-CSharp.csprojAssemblyReference.cache
 *.cache
+videos/seaworld.mp4
