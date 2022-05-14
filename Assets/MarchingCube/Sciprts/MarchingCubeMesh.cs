@@ -30,7 +30,7 @@ public class MarchingCubeMesh : MonoBehaviour,ISettingUpdate
         _marchCubeGPUGenerator.Dispose();
     }
 
-    public void GenerateMesh()
+    void GenerateMesh()
     {
         System.DateTime start = System.DateTime.Now;
         List<Vector3> vector3s = null;
@@ -103,17 +103,20 @@ public class MarchingCubeMesh : MonoBehaviour,ISettingUpdate
         Debug.LogWarning((end2-start).TotalMilliseconds+"ms");
     }
 
+    private void UpdateMaterial()
+    {
+        colorGenerator.SetMeshFilter(minMax.min,minMax.max,meshFilter.GetComponent<MeshRenderer>());
+    }
 
-    // private void OnValidate()
-    // {
-    //     if (!gameObject.activeInHierarchy)
-    //     {
-    //         return;
-    //     }
-    //     GenerateMesh();
-    //     colorGenerator.UpdateSetting(colorSetting);
-    //     colorGenerator.SetMeshFilter(minMax.min,minMax.max,meshFilter.GetComponent<MeshRenderer>());
-    // }
+    private void OnValidate()
+    {
+        if (!gameObject.activeInHierarchy)
+        {
+            return;
+        }
+        OnShapeSettingUpdated();
+        OnColorSettingUpdated();
+    }
 
 
     private void OnDrawGizmos()
@@ -154,7 +157,7 @@ public class MarchingCubeMesh : MonoBehaviour,ISettingUpdate
     }
 
 
-    public void OnDebugSettingUpdated()
+    void OnDebugSettingUpdated()
     {
         if (debugSetting.showCube)
         {
@@ -165,16 +168,22 @@ public class MarchingCubeMesh : MonoBehaviour,ISettingUpdate
     public void OnPositionUpdated()
     {
         GenerateMesh();
-        colorGenerator.SetMeshFilter(minMax.min,minMax.max,meshFilter.GetComponent<MeshRenderer>());
+        UpdateMaterial();
     }
 
-    
-    public void OnShapeSettingUpdated()
+
+
+    void OnShapeSettingUpdated()
     {
         GenerateMesh();
-        colorGenerator.SetMeshFilter(minMax.min,minMax.max,meshFilter.GetComponent<MeshRenderer>());
+        UpdateMaterial();
     }
 
+    void OnColorSettingUpdated()
+    {
+        colorGenerator.UpdateSetting(colorSetting);
+        UpdateMaterial();
+    }
     
     public void UpdateSetting(ScriptableObject scriptableObject)
     {
@@ -189,13 +198,8 @@ public class MarchingCubeMesh : MonoBehaviour,ISettingUpdate
         {
             OnColorSettingUpdated();
         }
-        colorGenerator.SetMeshFilter(minMax.min,minMax.max,meshFilter.GetComponent<MeshRenderer>());
     }
 
-    private void OnColorSettingUpdated()
-    {
-        colorGenerator.UpdateSetting(colorSetting);
-    }
 }
 
 

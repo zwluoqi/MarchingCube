@@ -5,6 +5,8 @@
 // with cs.SetTexture
 // RWTexture2D<float4> Result;
 #include "MarchCubeGenerator.hlsl"
+#include "MarchingCubeLookupTable.compute"
+
 //https://developer.nvidia.com/gpugems/gpugems3/part-i-geometry/chapter-1-generating-complex-procedural-terrains-using-gpu
 
 AppendStructuredBuffer<TriangleXXOO> vertices;
@@ -29,7 +31,6 @@ float lacunarity;
 float3 objPos;
 Buffer<int> vertexMapping;//[8];
 StructuredBuffer<float4> pointTable;//[8];
-// int triTable[256*16];//越界
 Buffer<int> triTable;//256*16
 Buffer<int> edgeMaskTable;//[256];
 Buffer<int> edgeTable;//[12*2];

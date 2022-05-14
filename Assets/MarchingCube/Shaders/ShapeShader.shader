@@ -69,7 +69,7 @@ Shader "URP_CUSTOM/ShapeShader"
         [HideInInspector][NoScaleOffset]unity_LightmapsInd("unity_LightmapsInd", 2DArray) = "" {}
         [HideInInspector][NoScaleOffset]unity_ShadowMasks("unity_ShadowMasks", 2DArray) = "" {}
         minMax("Min Max",Vector) =(0,0,0,0) 
-        normalOffsetWeight("normalOffsetWeight",float) = 0
+        normalOffsetWeight("normalOffsetWeight",Vector) = (0,0,0,0) 
     }
 
     SubShader

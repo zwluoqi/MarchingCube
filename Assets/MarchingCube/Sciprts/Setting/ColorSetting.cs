@@ -7,6 +7,6 @@ namespace MarchingCube.Sciprts
     {
         public Gradient gradient;
         public Material material;
-        
+        public Vector3 shaderOffsetParams;
     }
 }

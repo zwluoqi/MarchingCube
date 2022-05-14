@@ -16,10 +16,10 @@ MonoBehaviour:
   computeShader: {fileID: 7200000, guid: 29ec9226f689d473684a93e3c91f9771, type: 3}
   resolution:
     x: 128
-    y: 64
+    y: 128
     z: 128
-  roughness: 0.6
-  strength: 10
+  roughness: 6
+  strength: 1
   octaves:
   - {x: 2.07, y: 5.24, z: 2.07}
   - {x: 5.08, y: 1.62, z: 0.87}

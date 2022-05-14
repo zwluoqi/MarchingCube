@@ -114,21 +114,14 @@ Varyings CustomLitPassVertex(Attributes input)
     half3 vertexLight = VertexLighting(vertexInput.positionWS, normalInput.normalWS);
     half fogFactor = ComputeFogFactor(vertexInput.positionCS.z);
 
-    float2 sourceUV = TRANSFORM_TEX(input.texcoord, _BaseMap);
+    // float2 sourceUV = TRANSFORM_TEX(input.texcoord, _BaseMap);
     // output.uv = sourceUV;
-    float height = vertexInput.positionWS.y + normalInput.normalWS.y * normalOffsetWeight;
-    float h = smoothstep( minMax.x,minMax.y,height);
+    float height = vertexInput.positionWS.y + pow(normalInput.normalWS.y*0.5+0.5,  normalOffsetWeight.z)*normalOffsetWeight.x;
+    height /= max(normalOffsetWeight.y,0.00001);
+    float h = fmod(height,1);
+    // float h = normalInput.normalWS.y*0.5+0.5;
+    // float h = smoothstep( minMax.x,minMax.y,height);
     output.uv = float2(h,0.5f);
-    //float ocean = invLerp(_minmax.x,0,sourceUV.y);
-    //float depth = invLerp(0,_minmax.y,sourceUV.y);
-    //float x = 0.5*ocean+0.5*top;
-    // output.uv.x = 0.5f;
-    // output.uv.y = sourceUV.x;
-    //smoothness
-    //output.color.x = (1.0-floor(ocean));
-    
-    //output.uv.x = clamp((output.uv.x-_minmax.x)/(_minmax.y-_minmax.x),0,1);
-    //output.uv.y = 0;
     
     // already normalized from normal transform to WS.
     output.normalWS = normalInput.normalWS;

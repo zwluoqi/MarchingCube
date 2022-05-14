@@ -3,7 +3,7 @@ Shader "MarchingCube/Terrain"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        normalOffsetWeight("normalOffsetWeight",float) = 0
+        normalOffsetWeight("normalOffsetWeight",Vector) =  (0,0,0,0)
         minMax("minMax",Vector) = (0,0,0,0)
     }
     SubShader
@@ -41,7 +41,7 @@ Shader "MarchingCube/Terrain"
             sampler2D _MainTex;
             float4 _MainTex_ST;
 
-            float normalOffsetWeight;
+            float4 normalOffsetWeight;
             float2 minMax;
 
             v2f vert (appdata v)
@@ -60,7 +60,7 @@ Shader "MarchingCube/Terrain"
             {
                 // sample the texture
                 // return float4(i.wsNormal.xyz,1);
-                float height = i.wsPos.y + i.wsNormal.y * normalOffsetWeight;
+                float height = i.wsPos.y + i.wsNormal.y * normalOffsetWeight.x;
                 float h = smoothstep( minMax.x,minMax.y,height);
                 
                 fixed4 col = tex2D(_MainTex, float2(h,0.5f));

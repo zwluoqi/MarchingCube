@@ -3,7 +3,7 @@
 
 
 #include "MarchingCubeLookupTable.hlsl"
-#include "NoiseShader/SimplexNoise3D.hlsl"
+#include "../NoiseShader/SimplexNoise3D.hlsl"
 struct ShapeSetting
 {
     float roughness;
@@ -36,7 +36,7 @@ float KeyCircle(float3 pos,ShapeSetting shape_setting)
 
 float KeyNoise2(float3 pos,ShapeSetting shape_setting,StructuredBuffer<float3> offsets)
 {
-    float frequency = shape_setting.roughness*0.01;
+    float frequency = shape_setting.roughness*0.001;
     float amplitude = 1;
     float weight = 1;
     float noise = 0;
@@ -52,7 +52,7 @@ float KeyNoise2(float3 pos,ShapeSetting shape_setting,StructuredBuffer<float3> o
     }
 
     //地面高度调整
-    float finalVal = -(pos.y + shape_setting.floorOffset.y) + noise * 1;
+    float finalVal = -(pos.y + shape_setting.floorOffset.y) + noise * shape_setting.strength;
 
     //梯田
     float x = max(shape_setting.sharpenParams.x,0.001);
