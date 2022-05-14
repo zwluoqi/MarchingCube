@@ -5,6 +5,8 @@
  
  MarchingCube using
 
-| Scene | Image | Description |
-| --- | - | --- |
-| `MarchingCube Iter` | ![](images/QQ20220423-124218-HD.gif) | martchingcube算法使用 |
+| Scene | Image| | Description |
+| --- | - | --- |--- |
+| `MarchingCube Iter` | ![](images/QQ20220423-124218-HD.gif) | |martchingcube算法使用 ||
+| `MarchingCube Terrain` | ![](images/terrain.png) | |martchingcube地形生成 ||
+| `MarchingCube SeaWorld` | ![](images/seaworld.png) | https://www.bilibili.com/video/bv1ou411z72k |martchingcube海底地形生成 ||
