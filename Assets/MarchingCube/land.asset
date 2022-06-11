@@ -21,15 +21,15 @@ MonoBehaviour:
   roughness: 2
   strength: 2
   octaves:
-  - {x: 3.62, y: 0, z: 0}
-  - {x: 4, y: 0, z: 0}
-  - {x: 6, y: 0, z: 0}
-  - {x: 8, y: 0, z: 0}
-  - {x: 10, y: 0, z: 0}
-  - {x: 2.6, y: 0, z: 0}
-  weightMultiplier: 3.97
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  weightMultiplier: 6
   persistence: 1.5
-  lacunarity: 1.6
+  lacunarity: 1.5
   type: 3
   cubeSize: 1
   floorOffset: {x: 0, y: 0, z: 0}

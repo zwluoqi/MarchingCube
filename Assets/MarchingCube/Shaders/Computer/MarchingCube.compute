@@ -1,16 +1,14 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMainVertices
 
-// Create a RenderTexture with enableRandomWrite flag and set it
-// with cs.SetTexture
-// RWTexture2D<float4> Result;
+
 #include "MarchCubeGenerator.hlsl"
 // #include "MarchingCubeLookupTable.compute"
 
 //https://developer.nvidia.com/gpugems/gpugems3/part-i-geometry/chapter-1-generating-complex-procedural-terrains-using-gpu
 
 AppendStructuredBuffer<TriangleXXOO> vertices;
-AppendStructuredBuffer<float3> edgeDatas;
+// AppendStructuredBuffer<float3> edgeDatas;
 
 float3 Resolution;
 float roughness;

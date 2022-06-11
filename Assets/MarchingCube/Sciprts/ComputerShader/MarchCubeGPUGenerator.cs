@@ -158,9 +158,9 @@ namespace MarchingCube.Sciprts
             
             computeShader.SetBuffer(kernelVertices,verticesID,_meshDataComputerBuffer._bufferVertices);
             
-            var edgeDataBuffers = new ComputeBuffer(1024*128,3*4, ComputeBufferType.Append);
-            computeShader.SetBuffer(kernelVertices,edgeDatasID,edgeDataBuffers);
-            
+            // var edgeDataBuffers = new ComputeBuffer(1024*128,3*4, ComputeBufferType.Append);
+            // computeShader.SetBuffer(kernelVertices,edgeDatasID,edgeDataBuffers);
+            //
             computeShader.Dispatch(kernelVertices, ((shapeSetting.resolution.x-1)/8+1), ((shapeSetting.resolution.y-1)/8+1), ((shapeSetting.resolution.z-1)/8+1));
 
             var count = GetComputerBufferWriteCount(_meshDataComputerBuffer._bufferVertices);
@@ -174,20 +174,20 @@ namespace MarchingCube.Sciprts
             // Debug.Log("vertex:"+_meshData.vertices[0].ToString());
 
             
-            var edgeDataCount = GetComputerBufferWriteCount(edgeDataBuffers);
-            if (edgeDataCount > 0)
-            {
-                Debug.Log(" edgeDataBuffers: " + edgeDataCount);
-                float3[] edgeData = new float3[edgeDataCount];
-                edgeDataBuffers.GetData(edgeData);
-            }
-
-            // for (int i = 0; i < edgeData.Length&&i<16; i++)
+            // var edgeDataCount = GetComputerBufferWriteCount(edgeDataBuffers);
+            // if (edgeDataCount > 0)
             // {
-            //     Debug.Log($"edgeData{i}:"+edgeData[i].ToString());
+            //     Debug.Log(" edgeDataBuffers: " + edgeDataCount);
+            //     float3[] edgeData = new float3[edgeDataCount];
+            //     edgeDataBuffers.GetData(edgeData);
             // }
-            edgeDataBuffers.Release();
-            edgeDataBuffers.Dispose();
+            //
+            // // for (int i = 0; i < edgeData.Length&&i<16; i++)
+            // // {
+            // //     Debug.Log($"edgeData{i}:"+edgeData[i].ToString());
+            // // }
+            // edgeDataBuffers.Release();
+            // edgeDataBuffers.Dispose();
             
             offsetComputeBuffer.Dispose();
             offsetComputeBuffer.Release();

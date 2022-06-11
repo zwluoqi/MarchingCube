@@ -119,8 +119,6 @@ Varyings CustomLitPassVertex(Attributes input)
     float height = vertexInput.positionWS.y + pow(normalInput.normalWS.y*0.5+0.5,  normalOffsetWeight.z)*normalOffsetWeight.x;
     height /= max(normalOffsetWeight.y,0.00001);
     float h = fmod(height,1);
-    // float h = normalInput.normalWS.y*0.5+0.5;
-    // float h = smoothstep( minMax.x,minMax.y,height);
     output.uv = float2(h,0.5f);
     
     // already normalized from normal transform to WS.
@@ -178,12 +176,9 @@ Varyings CustomLitPassTerrainVertex(Attributes input)
     half3 vertexLight = VertexLighting(vertexInput.positionWS, normalInput.normalWS);
     half fogFactor = ComputeFogFactor(vertexInput.positionCS.z);
 
-    // float2 sourceUV = TRANSFORM_TEX(input.texcoord, _BaseMap);
+    float2 sourceUV = TRANSFORM_TEX(input.texcoord, _BaseMap);
     // output.uv = sourceUV;
     float height = input.positionOS.y;
-    // height /= max(normalOffsetWeight.y,0.00001);
-    // float h = fmod(height,1);
-    // float h = normalInput.normalWS.y*0.5+0.5;
     float h = smoothstep( minMax.x,minMax.y,height);
     output.uv = float2(h,0.5f);
     
